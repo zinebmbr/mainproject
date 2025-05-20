@@ -1,3 +1,4 @@
+// src/contexts/AuthContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
@@ -5,16 +6,16 @@ import api from '../api';
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser]       = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [error, setError]     = useState(null);
+  const navigate              = useNavigate();
 
+  // On mount: fetch current user
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
-        // fetch authenticated user
         const { data } = await api.get('/user');
         setUser(data);
       } catch (e) {
@@ -26,7 +27,8 @@ export function AuthProvider({ children }) {
     })();
   }, []);
 
-  const register = async (formData) => {
+  // Register
+  const register = async formData => {
     setLoading(true);
     try {
       await api.post('/register', formData);
@@ -35,7 +37,6 @@ export function AuthProvider({ children }) {
       setError(null);
       return { success: true };
     } catch (e) {
-      console.error(e);
       setError(e.response?.data?.errors || { general: [e.message] });
       return { success: false, errors: e.response?.data?.errors };
     } finally {
@@ -43,6 +44,7 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Login
   const login = async (email, password) => {
     setLoading(true);
     try {
@@ -52,7 +54,6 @@ export function AuthProvider({ children }) {
       setError(null);
       return { success: true };
     } catch (e) {
-      console.error(e);
       setError({ general: [e.response?.data?.message || 'Login failed'] });
       return { success: false };
     } finally {
@@ -60,14 +61,14 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Logout
   const logout = async () => {
     setLoading(true);
     try {
       await api.post('/logout');
       setUser(null);
       navigate('/signin');
-    } catch (e) {
-      console.error(e);
+    } catch {
       setError({ general: ['Logout failed'] });
     } finally {
       setLoading(false);
@@ -75,26 +76,22 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        error,
-        register,
-        login,
-        logout,
-        isAuthenticated: Boolean(user),
-      }}
-    >
+    <AuthContext.Provider value={{
+      user,
+      loading,
+      error,
+      register,
+      login,
+      logout,
+      isAuthenticated: Boolean(user),
+    }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be within AuthProvider');
+  return ctx;
 };
