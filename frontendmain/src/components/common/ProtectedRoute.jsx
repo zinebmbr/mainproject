@@ -1,20 +1,23 @@
-// src/components/common/ProtectedRoute.jsx
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function ProtectedRoute() {
   const { isAuthenticated, loading } = useAuth();
+  
   if (loading) return <div>Loading…</div>;
-  return !isAuthenticated
+  
+  return isAuthenticated 
     ? <Outlet />
     : <Navigate to="/signin" replace />;
 }
 
 export function PublicRoute() {
   const { isAuthenticated, loading } = useAuth();
+  
   if (loading) return <div>Loading…</div>;
-  return isAuthenticated
+  
+  return !isAuthenticated
     ? <Outlet />
-    : <Navigate to="/dashboard" replace />;
+    : <Navigate to="/" replace />; // Changed from "/dashboard" to "/" to match your home route
 }

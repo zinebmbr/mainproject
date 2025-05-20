@@ -2,6 +2,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import { toast } from 'react-toastify';
 
 const AuthContext = createContext();
 
@@ -35,9 +36,11 @@ export function AuthProvider({ children }) {
       const { data } = await api.get('/user');
       setUser(data);
       setError(null);
+      toast.success(`Welcome, ${data.name}! Your account was created successfully.`);
       return { success: true };
     } catch (e) {
       setError(e.response?.data?.errors || { general: [e.message] });
+      toast.error(e.response?.data?.message || 'Registration failed. Please try again.');
       return { success: false, errors: e.response?.data?.errors };
     } finally {
       setLoading(false);
@@ -52,9 +55,11 @@ export function AuthProvider({ children }) {
       const { data } = await api.get('/user');
       setUser(data);
       setError(null);
+      toast.success(`Welcome back, ${data.name}!`);
       return { success: true };
     } catch (e) {
       setError({ general: [e.response?.data?.message || 'Login failed'] });
+      toast.error(e.response?.data?.message || 'Invalid credentials. Please try again.');
       return { success: false };
     } finally {
       setLoading(false);
@@ -67,9 +72,11 @@ export function AuthProvider({ children }) {
     try {
       await api.post('/logout');
       setUser(null);
+      toast.info('You have been logged out successfully.');
       navigate('/signin');
     } catch {
       setError({ general: ['Logout failed'] });
+      toast.error('Logout failed. Please try again.');
     } finally {
       setLoading(false);
     }

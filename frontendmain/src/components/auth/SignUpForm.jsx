@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
@@ -11,7 +11,6 @@ export default function SignUpForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
   const { register, loading } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -28,19 +27,58 @@ export default function SignUpForm() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+
+    if (!formData.name.trim()) {
+      newErrors.name = ['Name is required'];
+      isValid = false;
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = ['Email is required'];
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = ['Email is invalid'];
+      isValid = false;
+    }
+
+    if (!formData.password) {
+      newErrors.password = ['Password is required'];
+      isValid = false;
+    } else if (formData.password.length < 8) {
+      newErrors.password = ['Password must be at least 8 characters'];
+      isValid = false;
+    }
+
+    if (formData.password !== formData.password_confirmation) {
+      newErrors.password_confirmation = ['Passwords do not match'];
+      isValid = false;
+    }
+
+    if (!isChecked) {
+      newErrors.terms = ['Please accept the terms and conditions'];
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isChecked) {
-      setErrors(prev => ({ ...prev, terms: ['Please accept the terms and conditions.'] }));
+    
+    if (!validateForm()) {
       return;
     }
 
     const result = await register(formData);
-    if (result.success) {
-      navigate('/');
-    } else {
+    if (!result.success) {
       setErrors(result.errors || {});
     }
+    // Toast notification is handled in the AuthContext
+    // Redirection is handled by the PublicRoute component
   };
 
   return (
@@ -128,6 +166,12 @@ export default function SignUpForm() {
         >
           {loading ? 'Signing Up...' : 'Sign Up'}
         </button>
+        
+        <div className="text-center mt-4">
+          <span className="text-sm text-gray-600">
+            Already have an account? <Link to="/signin" className="text-blue-600 hover:text-blue-800">Sign in</Link>
+          </span>
+        </div>
       </form>
     </div>
   );
