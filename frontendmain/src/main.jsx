@@ -9,6 +9,7 @@ import { AppWrapper } from "./components/common/PageMeta.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import axios from "axios";
+import { CollaborateursProvider } from "./contexts/CollaborateursContext.jsx";
 
 async function bootstrap() {
   await axios.get("http://main.local/sanctum/csrf-cookie", {
@@ -23,6 +24,7 @@ bootstrap()
         <BrowserRouter>
           <ThemeProvider>
             <AuthProvider>
+            <CollaborateursProvider>
               <AppWrapper>
                 <App />
                 <ToastContainer 
@@ -38,6 +40,7 @@ bootstrap()
                   theme="light"
                 />
               </AppWrapper>
+              </CollaborateursProvider>
             </AuthProvider>
           </ThemeProvider>
         </BrowserRouter>

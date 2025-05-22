@@ -19,6 +19,7 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import ProtectedRoute, { PublicRoute } from "./components/common/ProtectedRoute";
+import CollaborateursTable from "./pages/Tables/CollaborateursTable";
 
 export default function App() {
   return (
@@ -29,7 +30,7 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
-            
+
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />
@@ -37,9 +38,11 @@ export default function App() {
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
+            <Route path="/collaborateurs" element={<CollaborateursTable />} />
 
             {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />
+            <Route path="/collaborateurs" element={<CollaborateursTable />} />
 
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\CollaborateurController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,5 +31,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/register', function () {
         return redirect('/signup'); // Or whatever your frontend route is
     });
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/collaborateurs', [CollaborateurController::class, 'index']);
+});
     // Add other protected API routes here
 });
