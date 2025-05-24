@@ -31,9 +31,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/register', function () {
         return redirect('/signup'); // Or whatever your frontend route is
     });
-
-Route::middleware('auth:sanctum')->group(function () {
+    
+    // Collaborateur routes
     Route::get('/collaborateurs', [CollaborateurController::class, 'index']);
-});
+    Route::post('/collaborateurs', [CollaborateurController::class, 'store']);
+    Route::get('/collaborateurs/{id}', [CollaborateurController::class, 'show']);
+    Route::put('/collaborateurs/{id}', [CollaborateurController::class, 'update']);
+    Route::delete('/collaborateurs/{id}', [CollaborateurController::class, 'destroy']);
+    
     // Add other protected API routes here
 });
